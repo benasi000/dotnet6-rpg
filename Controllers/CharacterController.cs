@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using dotnet6_rpg.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NET_6_WEB_API.Controllers
@@ -10,30 +11,28 @@ namespace NET_6_WEB_API.Controllers
     [Route("api/[controller]")]
     public class CharacterController : ControllerBase
     {
-        private static List<Character> characters = new  List<Character> {
-            new Character(),
-            new Character { Id = 1,  Name= "Jan" }
-        };
+        private readonly ICharacterService _characterService;
+        public CharacterController(ICharacterService characterService)
+        {
+            this._characterService = characterService;
 
-
+        }
         [HttpGet("GetAll")]
         public ActionResult<List<Character>> Get()
         {
-            return Ok(characters);
+            return Ok(_characterService.GetAllCharacters());
         }
 
         [HttpGet("{id}")]
         public ActionResult<List<Character>> GetSingle(int id)
         {
-            return Ok(characters.FirstOrDefault(c => c.Id == id));
+            return Ok(_characterService.GetCharacterById(id));
         }
 
         [HttpPost]
         public ActionResult<List<Character>> AddCharacter(Character newCharacter)
         {
-            characters.Add(newCharacter);
-
-            return Ok(characters);
+            return Ok(_characterService.AddCharacter(newCharacter));
         }
     }
 }
